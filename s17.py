@@ -10,10 +10,7 @@ def darken_gray(g_img,alpha,beta):
             new_img[x,y] = np.clip(alpha * g_img[x,y] - beta, 0, 255) 
     return new_img
 
-def main():
-    # read image
-    img = cv2.imread('0376.jpg')
-
+def conversion(img):
     # Step 1
     g_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
@@ -38,6 +35,14 @@ def main():
 
     # Step 7
     res = cv2.bitwise_and(dg,mask)
+
+    return g_img, dg, hsv, yellow_mask, white_mask, mask, res
+
+def main():
+    # read image
+    img = cv2.imread('dataset\\0376.jpg')
+
+    g_img, dg, hsv, yellow_mask, white_mask, mask, res = conversion(img)
 
     cv2.imshow('yellow',yellow_mask)
     cv2.imshow('white',white_mask)
