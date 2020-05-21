@@ -24,7 +24,7 @@ def gaussianPyramid(img, reduceScale):
     print("new img size:", np.array(img).shape[:2])
     return np.array(img)
             
-def houghline(img, threshold, reduceScale):
+def houghline(img, imgForDraw, threshold, reduceScale):
     width, height = img.shape[:2]
     diagonal = math.floor(np.sqrt(width**2 + height**2))
     lines = np.zeros((2*diagonal,180))
@@ -65,39 +65,5 @@ def houghline(img, threshold, reduceScale):
         x2 = int(x0 - 1500*(-b))
         y2 = int(y0 - 1500*(a))
         cv.line(imgForDraw,(x1,y1),(x2,y2),(0,255,0),1)
-    return [lines,img]
+    return [lines,imgForDraw]
 
-img = cv.imread("test image/test5.jpg")
-imgForDraw = img.copy()
-pyramidLayer = 3
-original_img = gaussianPyramid(img,pyramidLayer)
-# imgForDraw = original_img.copy()
-img = cv.cvtColor(img, cv.COLOR_BGR2GRAY) 
-img = cv.Canny(img,50,100,apertureSize = 3)
-img = cv.ximgproc.thinning(img)
-img = gaussianPyramid(img,pyramidLayer)
-# img = cv.threshold(img,127,255,cv.THRESH_BINARY)
-
-# implement global thresholding
-for i in range(img.shape[0]):
-    for j in range(img.shape[1]):
-        if img[i,j] < 10:
-            img[i,j] = 0
-        else:
-            img[i,j] = 255
-
-thres = 18
-[x,y] = houghline(img, thres, pyramidLayer)
-img = y.copy()
-
-# show image
-fig=plt.figure(figsize=(8, 8))
-columns = 3
-rows = 1
-fig.add_subplot(rows, columns, 1)
-plt.imshow(original_img)
-fig.add_subplot(rows, columns, 2)
-plt.imshow(x, cmap='gray')
-fig.add_subplot(rows, columns, 3)
-plt.imshow(imgForDraw)
-plt.show()

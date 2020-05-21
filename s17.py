@@ -12,7 +12,7 @@ def darken_gray(g_img,alpha,beta):
 
 def main():
     # read image
-    img = cv2.imread('0376.jpg')
+    img = cv2.imread('dataset/0376.jpg')
 
     # Step 1
     g_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
