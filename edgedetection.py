@@ -68,7 +68,7 @@ def nonMaximumSuppression(magnitude, angle):
     #edge thinning by using non-maximum suppression
 
     final = np.zeros(magnitude.shape,dtype = int)
-    im_x, im_y = magnitude.shape # fint the size of image
+    im_x, im_y = magnitude.shape # find the size of image
     padded = padding(magnitude, 1, 1) # create padded image
 
     # suppression method
@@ -100,7 +100,7 @@ def cannyEdgeDetection(image, gaussian_size, sd, lower_limit, upper_limit):
 
 def main():
     try:
-        hello = cv2.imread('dataset\\0001.jpg')
+        hello = cv2.imread('dataset\\1500.jpg')
         g_img, dg, hsv, yellow_mask, white_mask, mask, res = conversion(hello)
         final = cannyEdgeDetection(hello[:,:,0], 7, 2, 150, 255)
 
