@@ -86,44 +86,44 @@ def inRange(img, lower, upper):
                     res[x,y] = 0
     return res
 
-def main():
-    # # read image
-    img = cv2.imread('0376.jpg')
+# def main():
+#     # # read image
+#     img = cv2.imread('0376.jpg')
 
-    # # Step 1
-    g_img = rgb2gray(img)
+#     # # Step 1
+#     g_img = rgb2gray(img)
 
-    # # Step 2
-    dg = darken_gray(g_img,0.7,0)
+#     # # Step 2
+#     dg = darken_gray(g_img,0.7,0)
 
-    # # Step 3
-    hsv = rgb2hsv(img)
+#     # # Step 3
+#     hsv = rgb2hsv(img)
 
-    # # Step 4 yellow mask
-    lower_yellow = np.array([10,100,0], dtype=np.uint8)
-    upper_yellow = np.array([40,255,255], dtype=np.uint8)
-    yellow_mask = inRange(hsv, lower_yellow, upper_yellow)
+#     # # Step 4 yellow mask
+#     lower_yellow = np.array([10,100,0], dtype=np.uint8)
+#     upper_yellow = np.array([40,255,255], dtype=np.uint8)
+#     yellow_mask = inRange(hsv, lower_yellow, upper_yellow)
 
-    # # Step 5 white white
-    lower_white = np.array([10,20,100], dtype=np.uint8)
-    upper_white = np.array([30,50,255], dtype=np.uint8)
-    white_mask = inRange(hsv, lower_white, upper_white)
+#     # # Step 5 white white
+#     lower_white = np.array([10,20,100], dtype=np.uint8)
+#     upper_white = np.array([30,50,255], dtype=np.uint8)
+#     white_mask = inRange(hsv, lower_white, upper_white)
 
-    # # Step 6
-    mask = bitwise_or(white_mask, yellow_mask)
+#     # # Step 6
+#     mask = bitwise_or(white_mask, yellow_mask)
 
-    # # Step 7
-    res = bitwise_and(dg,mask)
+#     # # Step 7
+#     res = bitwise_and(dg,mask)
 
-    cv2.imshow('yellow',yellow_mask)
-    cv2.imshow('white',white_mask)
-    cv2.imshow('image',img)
-    cv2.imshow('darken',dg)
-    cv2.imshow('hsv',hsv)
-    cv2.imshow('mask',mask)
-    cv2.imshow('res',res)
-    cv2.waitKey()
+#     cv2.imshow('yellow',yellow_mask)
+#     cv2.imshow('white',white_mask)
+#     cv2.imshow('image',img)
+#     cv2.imshow('darken',dg)
+#     cv2.imshow('hsv',hsv)
+#     cv2.imshow('mask',mask)
+#     cv2.imshow('res',res)
+#     cv2.waitKey()
 
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()

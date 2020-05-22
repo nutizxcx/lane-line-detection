@@ -47,8 +47,7 @@ def houghline(img, imgForDraw, threshold, reduceScale):
                     if d <= 1:
                         index = math.floor(dist + lines.shape[0]/2)
                         lines[index,theta] = lines[index,theta] + 1 
-    t1 = time.time()
-    print("total process time: %.2f" % float(t1-t0),"sec")
+    
 
     # draw lines
     rho_theta_coor = np.where(lines>threshold)
@@ -64,6 +63,6 @@ def houghline(img, imgForDraw, threshold, reduceScale):
         y1 = int(y0 + 1500*(a))
         x2 = int(x0 - 1500*(-b))
         y2 = int(y0 - 1500*(a))
-        cv.line(imgForDraw,(x1,y1),(x2,y2),(0,255,0),1)
+        cv.line(imgForDraw,(x1,y1),(x2,y2),(0,255,0),8)
     return [lines,imgForDraw]
 
