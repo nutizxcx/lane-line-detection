@@ -85,21 +85,11 @@ def nonMaximumSuppression(magnitude, angle):
     return final
 
 def hysteresis(img):
-    # imsize = img.shape
-    # for i in range(0,imsize[0]):
-    #     for j in range(0,imsize[1]):
-    #         try:
-    #             if img[i,j] == 127:
-    #                 tmp = img[i-1:i+2,j-1:j+2]
-    #                 tmp[1:1] = 0
-    #                 tmp[tmp != 255] = 0
-    #                 img[i,j] = 255 if np.sum(tmp) > 0 else 0
-    #         except IndexError:
-    #             pass
+    # hysteresis is about checking pixel that is not guaranteed to be edge by using 
+    # 8-connected region that has a pixel that is surely to be an edge.
     X, Y = np.where(img == 255)
     img0 = np.zeros(img.shape)
     while len(X) != 0:
-    # for i in range(1,100):
         X0 = X[0]
         Y0 = Y[0]
         X = np.delete(X, 0)
