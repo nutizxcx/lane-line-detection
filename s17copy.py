@@ -61,17 +61,17 @@ def bitwise_or(img1, img2):
                     new_img[x,y] = 0
         return new_img  
 
-def bitwise_and(img1, img2):
-    if ((img1.shape[0] != img2.shape[0]) and (img1.shape[1] != img2.shape[1])):
+def bitwise_and(img1, mask):
+    if ((img1.shape[0] != mask.shape[0]) and (img1.shape[1] != mask.shape[1])):
         print("image size error")
         return 0
     else:
         new_img = np.zeros(img1.shape, dtype = 'uint8')
         for x in range(img1.shape[0]):
             for y in range(img1.shape[1]):
-                if img1[x,y] and img2[x,y]:
+                if img1[x,y] and mask[x,y]:
                     # new_img[x,y] = round(((0.3*int(img1[x,y])) + (0.7*int(img2[x,y])))/2)
-                    new_img[x,y] = 255
+                    new_img[x,y] = img1[x,y]
                 else:
                     new_img[x,y] = 0
         return new_img            

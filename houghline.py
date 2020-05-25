@@ -23,7 +23,25 @@ def gaussianPyramid(img, reduceScale):
     print("img size:", original_img.shape[:2])
     print("new img size:", np.array(img).shape[:2])
     return np.array(img)
-            
+
+def drawLine(imgForDraw, lines, threshold, diagonal, reduceScale):
+    # draw lines
+    rho_theta_coor = np.where(lines>threshold)
+    for rho, theta in zip(rho_theta_coor[0],rho_theta_coor[1]):
+        rho = rho - diagonal
+        rho = rho * ( 2 ** reduceScale ) 
+        rad_theta = (theta - 90)*math.pi / 180
+        a = np.cos(rad_theta)
+        b = np.sin(rad_theta)
+        x0 = a*rho
+        y0 = b*rho
+        x1 = int(x0 + 1500*(-b))
+        y1 = int(y0 + 1500*(a))
+        x2 = int(x0 - 1500*(-b))
+        y2 = int(y0 - 1500*(a))
+        cv.line(imgForDraw,(x1,y1),(x2,y2),(0,255,0),3)
+    return [lines,imgForDraw]
+
 def houghline(img, imgForDraw, threshold, reduceScale):
     width, height = img.shape[:2]
     diagonal = math.floor(np.sqrt(width**2 + height**2))
@@ -47,22 +65,5 @@ def houghline(img, imgForDraw, threshold, reduceScale):
                     if d <= 1:
                         index = math.floor(dist + lines.shape[0]/2)
                         lines[index,theta] = lines[index,theta] + 1 
-    
-
-    # draw lines
-    rho_theta_coor = np.where(lines>threshold)
-    for rho, theta in zip(rho_theta_coor[0],rho_theta_coor[1]):
-        rho = rho - diagonal
-        rho = rho * ( 2 ** reduceScale ) 
-        rad_theta = (theta - 90)*math.pi / 180
-        a = np.cos(rad_theta)
-        b = np.sin(rad_theta)
-        x0 = a*rho
-        y0 = b*rho
-        x1 = int(x0 + 1500*(-b))
-        y1 = int(y0 + 1500*(a))
-        x2 = int(x0 - 1500*(-b))
-        y2 = int(y0 - 1500*(a))
-        cv.line(imgForDraw,(x1,y1),(x2,y2),(0,255,0),8)
-    return [lines,imgForDraw]
+    return drawLine(imgForDraw, lines, threshold, diagonal, reduceScale)
 

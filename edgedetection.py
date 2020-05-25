@@ -1,6 +1,8 @@
 import cv2
 import numpy as np
 import sys
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 from s17 import *
 
@@ -82,15 +84,47 @@ def nonMaximumSuppression(magnitude, angle):
             final[i,j] = magnitude[i, j] if max(positive, negative, magnitude[i, j]) == magnitude[i, j] else 0
     return final
 
+def hysteresis(img):
+    # hysteresis is about checking pixel that is not guaranteed to be edge by using 
+    # 8-connected region that has a pixel that is surely to be an edge.
+    X, Y = np.where(img == 255)
+    img0 = np.zeros(img.shape)
+    while len(X) != 0:
+        X0 = X[0]
+        Y0 = Y[0]
+        X = np.delete(X, 0)
+        Y = np.delete(Y, 0)
+        if img0[X0, Y0] == 0:
+            try:
+                tmp = img[X0-2:X0+3, Y0-2:Y0+3]
+                tmp[2,2] = 0
+                X1, Y1 = np.where(tmp == 127)
+                tmp[tmp == 127] = 255
+                X1 = X1 + X0 - 2
+                Y1 = Y1 + Y0 - 2
+                X = np.concatenate((X, X1))
+                Y = np.concatenate((Y, Y1))
+                img[X0-2:X0+3, Y0-2:Y0+3] = tmp
+                img0[X0,Y0] = 255 if np.sum(tmp) > 0 else 0
+            except IndexError:
+                pass
+    return img0.astype('uint8')
+
+            
+
 def cannyEdgeDetection(image, gaussian_size, sd, lower_limit, upper_limit):
     # this function is applied for edge detection.
 
     gauss = gaussianFilter(gaussian_size, sd)
     convt_image = convolution(image, gauss)
     magnitude, angle = sobelEdgeDetection(convt_image)
-    final = nonMaximumSuppression(magnitude, angle)
-    final[np.bitwise_or(lower_limit > final, final > upper_limit)] = 0
-    final[final != 0] = 255
+    final0 = nonMaximumSuppression(magnitude, angle)
+    final = np.zeros(final0.shape)
+    final[lower_limit > final0] = 0
+    final[np.bitwise_and(upper_limit > final0, final0 > lower_limit)] = 127
+    final[upper_limit < final0] = 255
 
-    return final.astype('uint8')
-#%%------------ Step 10 Define region of interest ----------------------
+    return hysteresis(final).astype('uint8')
+    #%%------------ Step 10 Define region of interest ----------------------
+
+

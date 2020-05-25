@@ -34,13 +34,13 @@ def conversion(img):
     mask = cv2.bitwise_or(white_mask, yellow_mask)
 
     # Step 7
-    res = cv2.bitwise_and(dg,mask)
+    res = cv2.bitwise_and(dg, mask)
 
     return g_img, dg, hsv, yellow_mask, white_mask, mask, res
 
 def main():
     # read image
-    img = cv2.imread('dataset\\0376.jpg')
+    img = cv2.imread('dataset/0376.jpg')
 
     g_img, dg, hsv, yellow_mask, white_mask, mask, res = conversion(img)
 
