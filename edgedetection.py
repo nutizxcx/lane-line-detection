@@ -106,7 +106,6 @@ def hysteresis(img):
                 Y = np.concatenate((Y, Y1))
                 img[X0-2:X0+3, Y0-2:Y0+3] = tmp
                 img0[X0,Y0] = 255 if np.sum(tmp) > 0 else 0
-                print(np.sum(img0))
             except IndexError:
                 pass
     return img0.astype('uint8')
