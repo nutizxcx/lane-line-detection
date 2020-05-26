@@ -1,4 +1,3 @@
-import cv2
 import numpy as np
 import sys
 import seaborn as sns
@@ -123,7 +122,7 @@ def cannyEdgeDetection(image, gaussian_size, sd, lower_limit, upper_limit):
     final[lower_limit > final0] = 0
     final[np.bitwise_and(upper_limit > final0, final0 > lower_limit)] = 127
     final[upper_limit < final0] = 255
-
+    
     return hysteresis(final).astype('uint8')
     #%%------------ Step 10 Define region of interest ----------------------
 

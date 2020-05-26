@@ -20,37 +20,61 @@ def gaussianPyramid(img, reduceScale):
                 tempRow = []
         img = newImg.copy()      
         newImg = []
-    print("img size:", original_img.shape[:2])
-    print("new img size:", np.array(img).shape[:2])
     return np.array(img)
 
-def drawLine(imgForDraw, lines, threshold, diagonal, reduceScale):
+def findStrongLine(rho_theta_coor):
+    strongLine = []
+    distLim = 140
+    maxLine = 20
+
+    for i in range(len(rho_theta_coor[0])):
+        for j in range(i,len(rho_theta_coor[1])):
+            dist = math.sqrt( ( (rho_theta_coor[0][i] - rho_theta_coor[0][j])**2 ) + (rho_theta_coor[1][i] - rho_theta_coor[1][j])**2 ) 
+            if dist > distLim:          
+                strongLine.append([rho_theta_coor[0][i], rho_theta_coor[1][i]])
+                strongLine.append([rho_theta_coor[0][j], rho_theta_coor[1][j]])
+                break
+        strongLine = [x for n,x in enumerate(strongLine) if x not in strongLine[:n]]
+        if len(strongLine) == maxLine:
+            break
+
+    if len(strongLine) == 0:
+        strongLine = [[rho_theta_coor[0][i], rho_theta_coor[1][i]]]
+
+    return strongLine
+
+def drawLine(imgForDraw, lines, threshold, diagonal, reduceScale, startPoint, endPoint):
     # draw lines
     rho_theta_coor = np.where(lines>threshold)
-    for rho, theta in zip(rho_theta_coor[0],rho_theta_coor[1]):
-        rho = rho - diagonal
-        rho = rho * ( 2 ** reduceScale ) 
-        rad_theta = (theta - 90)*math.pi / 180
-        a = np.cos(rad_theta)
-        b = np.sin(rad_theta)
-        x0 = a*rho
-        y0 = b*rho
-        x1 = int(x0 + 1500*(-b))
-        y1 = int(y0 + 1500*(a))
-        x2 = int(x0 - 1500*(-b))
-        y2 = int(y0 - 1500*(a))
-        cv.line(imgForDraw,(x1,y1),(x2,y2),(0,255,0),3)
+    if len(rho_theta_coor[0]) != 0:
+        strongLine = findStrongLine(rho_theta_coor)
+        for rho, theta in strongLine:
+            x1 = startPoint[rho][theta][1] * ( 2 ** reduceScale ) 
+            y1 = startPoint[rho][theta][0] * ( 2 ** reduceScale )
+            x2 = endPoint[rho][theta][1] * ( 2 ** reduceScale )
+            y2 = endPoint[rho][theta][0] * ( 2 ** reduceScale )
+            cv.line(imgForDraw,(x1,y1),(x2,y2),(0,255,0),3)
     return [lines,imgForDraw]
 
 def houghline(img, imgForDraw, threshold, reduceScale):
-    width, height = img.shape[:2]
+    height, width = img.shape[:2]
     diagonal = math.floor(np.sqrt(width**2 + height**2))
     lines = np.zeros((2*diagonal,180))
+    # create empty startPoint list
+    startPoint = []
+    for i in range(lines.shape[0]):
+        tmp = [ [] for _ in range(lines.shape[1])]
+        startPoint.append(tmp)
+    # create empty endPoint list
+    endPoint = []
+    for i in range(lines.shape[0]):
+        tmp = [ [] for _ in range(lines.shape[1])]
+        endPoint.append(tmp)
+
     possible_rho = np.array(range(-diagonal,diagonal))
 
-    t0 = time.time()
-    for col in range(height):
-        for row in range(width):
+    for row in range(height):
+        for col in range(width):
             # if pixel is not background
             if img[row,col] > 0:
                 # calculate rho,theta coefficient
@@ -65,5 +89,17 @@ def houghline(img, imgForDraw, threshold, reduceScale):
                     if d <= 1:
                         index = math.floor(dist + lines.shape[0]/2)
                         lines[index,theta] = lines[index,theta] + 1 
-    return drawLine(imgForDraw, lines, threshold, diagonal, reduceScale)
+                        # initial start point                    
+                        if len(startPoint[index][theta]) == 0:
+                            startPoint[index][theta] = [row,col]
+                        # initial end point
+                        elif len(endPoint[index][theta]) == 0:
+                            endPoint[index][theta] = [row,col]
+                        # find longest end point
+                        else:
+                            previousDist = math.sqrt( (startPoint[index][theta][0] - endPoint[index][theta][0])**2 + (startPoint[index][theta][1] - endPoint[index][theta][1])**2 )
+                            newDist = math.sqrt( (startPoint[index][theta][0] - row)**2 + (startPoint[index][theta][1] - col)**2 )
+                            if previousDist < newDist:
+                                endPoint[index][theta] = [row,col]    
+    return drawLine(imgForDraw, lines, threshold, diagonal, reduceScale, startPoint, endPoint)
 
