@@ -7,7 +7,7 @@ from houghline import *
 
 
 t0 = time.time() 
-img = cv2.imread('challenge_000/challenge_001.jpg')
+img = cv2.imread('challenge_000/challenge_018.jpg')
 originalImg = img.copy()
 imgForDraw = img.copy()
 temp = np.zeros((img.shape[0], img.shape[1]))
