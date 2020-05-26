@@ -25,7 +25,7 @@ def gaussianPyramid(img, reduceScale):
 def findStrongLine(rho_theta_coor):
     strongLine = []
     distLim = 140
-    maxLine = 20
+    maxLine = 4
 
     for i in range(len(rho_theta_coor[0])):
         for j in range(i,len(rho_theta_coor[1])):
