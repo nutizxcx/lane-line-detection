@@ -24,7 +24,7 @@ def gaussianPyramid(img, reduceScale):
 
 def findStrongLine(rho_theta_coor):
     strongLine = []
-    distLim = 180
+    distLim = 160
     # maxLine = 20
 
     for i in range(len(rho_theta_coor[0])):
@@ -35,9 +35,7 @@ def findStrongLine(rho_theta_coor):
                 strongLine.append([rho_theta_coor[0][i], rho_theta_coor[1][i]])
                 strongLine.append([rho_theta_coor[0][j], rho_theta_coor[1][j]])
                 # break
-        print("before:", strongLine)
         strongLine = [x for n,x in enumerate(strongLine) if x not in strongLine[:n]]
-        print("after:",strongLine)
         # if len(strongLine) == maxLine:
         #     break
 
@@ -49,9 +47,6 @@ def findStrongLine(rho_theta_coor):
 def drawLine(imgForDraw, lines, threshold, diagonal, reduceScale, startPoint, endPoint):
     # draw lines
     rho_theta_coor = np.where(lines>threshold)
-    for i in rho_theta_coor[0]:
-        for j in rho_theta_coor[1]:
-            print("rho:",lines[rho_theta_coor[0][i], "theta:", rho_theta_coor[1][j]])
 
     if len(rho_theta_coor[0]) != 0:
         strongLine = findStrongLine(rho_theta_coor)

@@ -7,7 +7,7 @@ from houghline import *
 
 
 t0 = time.time() 
-img = cv2.imread('challenge_000/challenge_099.jpg')
+img = cv2.imread('challenge_000/challenge_001.jpg')
 originalImg = img.copy()
 imgForDraw = img.copy()
 temp = np.zeros((img.shape[0], img.shape[1]))
@@ -56,8 +56,7 @@ res = bitwise_and(dg[top_edge:bottom_edge, :right_edge], mask)
 temp[top_edge:bottom_edge, :right_edge] = res
 
 res = temp.copy()
-# cv2.imshow("res",res)
-# cv2.waitKey()
+
 # Edge detection
 edge = cannyEdgeDetection(res, 3, 5, 50, 100)
 
@@ -74,18 +73,20 @@ print("total process time: %.2f" % float(t1-t0),"sec")
 
 # show result
 fig=plt.figure(figsize=(8, 8))
-columns = 5
+columns = 4
 rows = 1
 fig.add_subplot(rows, columns, 1)
 plt.imshow(cv2.cvtColor(originalImg, cv2.COLOR_BGR2RGB))
+plt.title("original image")
 fig.add_subplot(rows, columns, 2)
 plt.imshow(res, cmap='gray')
+plt.title("color extracted image")
 fig.add_subplot(rows, columns, 3)
 plt.imshow(edge, cmap='gray')
+plt.title("edge detected image")
 fig.add_subplot(rows, columns, 4)
 plt.imshow(cv2.cvtColor(result, cv2.COLOR_BGR2RGB))
-fig.add_subplot(rows, columns, 5)
-plt.imshow(houghLineRep, cmap='gray')
+plt.title("drew lines image")
 plt.show()
 
 
