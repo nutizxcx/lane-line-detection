@@ -7,10 +7,15 @@ from houghline import *
 
 
 t0 = time.time() 
-img = cv2.imread('dataset/0376.jpg')
+img = cv2.imread('challenge_000/challenge_099.jpg')
 originalImg = img.copy()
 imgForDraw = img.copy()
 temp = np.zeros((img.shape[0], img.shape[1]))
+
+top_edge = 500
+bottom_edge = img.shape[0]
+left_edge = 0
+right_edge = img.shape[1] - 200
 
 # Step 1
 g_img = rgb2gray(img)
@@ -19,31 +24,40 @@ g_img = rgb2gray(img)
 dg = darken_gray(g_img,0.7,0)
 
 # Region of interest
-img = img[img.shape[0]-150:img.shape[0]-30, :img.shape[1]]
+img = img[top_edge:bottom_edge, :right_edge]
 
 # Step 3
 hsv = rgb2hsv(img)
 
 # Step 4 yellow mask
-lower_yellow = np.array([0,68,108], dtype=np.uint8)
+# lower_yellow = np.array([0,68,108], dtype=np.uint8)
+# upper_yellow = np.array([23,255,255], dtype=np.uint8)
+# yellow_mask = inRange(hsv, lower_yellow, upper_yellow)
+
+lower_yellow = np.array([15,90,0], dtype=np.uint8)
 upper_yellow = np.array([23,255,255], dtype=np.uint8)
 yellow_mask = inRange(hsv, lower_yellow, upper_yellow)
 
 # Step 5 white white
-lower_white = np.array([24,0,103], dtype=np.uint8)
-upper_white = np.array([62,255,255], dtype=np.uint8)
+# lower_white = np.array([24,0,103], dtype=np.uint8)
+# upper_white = np.array([62,255,255], dtype=np.uint8)
+# white_mask = inRange(hsv, lower_white, upper_white)
+
+lower_white = np.array([0,0,230], dtype=np.uint8)
+upper_white = np.array([179,34,255], dtype=np.uint8)
 white_mask = inRange(hsv, lower_white, upper_white)
 
 # Step 6
 mask = bitwise_or(white_mask, yellow_mask)
 
 # Step 7
-res = bitwise_and(dg[dg.shape[0]-150:dg.shape[0]-30, :dg.shape[1]], mask)
+res = bitwise_and(dg[top_edge:bottom_edge, :right_edge], mask)
 
-temp[temp.shape[0]-150:temp.shape[0]-30, :temp.shape[1]] = res
+temp[top_edge:bottom_edge, :right_edge] = res
 
 res = temp.copy()
-
+# cv2.imshow("res",res)
+# cv2.waitKey()
 # Edge detection
 edge = cannyEdgeDetection(res, 3, 5, 50, 100)
 
@@ -60,7 +74,7 @@ print("total process time: %.2f" % float(t1-t0),"sec")
 
 # show result
 fig=plt.figure(figsize=(8, 8))
-columns = 4
+columns = 5
 rows = 1
 fig.add_subplot(rows, columns, 1)
 plt.imshow(cv2.cvtColor(originalImg, cv2.COLOR_BGR2RGB))
@@ -70,8 +84,8 @@ fig.add_subplot(rows, columns, 3)
 plt.imshow(edge, cmap='gray')
 fig.add_subplot(rows, columns, 4)
 plt.imshow(cv2.cvtColor(result, cv2.COLOR_BGR2RGB))
-# fig.add_subplot(rows, columns, 5)
-# plt.imshow(houghLineRep, cmap='gray')
+fig.add_subplot(rows, columns, 5)
+plt.imshow(houghLineRep, cmap='gray')
 plt.show()
 
 

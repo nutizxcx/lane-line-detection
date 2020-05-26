@@ -24,31 +24,39 @@ def gaussianPyramid(img, reduceScale):
 
 def findStrongLine(rho_theta_coor):
     strongLine = []
-    distLim = 140
-    maxLine = 4
+    distLim = 180
+    # maxLine = 20
 
     for i in range(len(rho_theta_coor[0])):
         for j in range(i,len(rho_theta_coor[1])):
             dist = math.sqrt( ( (rho_theta_coor[0][i] - rho_theta_coor[0][j])**2 ) + (rho_theta_coor[1][i] - rho_theta_coor[1][j])**2 ) 
+            # print(dist)
             if dist > distLim:          
                 strongLine.append([rho_theta_coor[0][i], rho_theta_coor[1][i]])
                 strongLine.append([rho_theta_coor[0][j], rho_theta_coor[1][j]])
-                break
+                # break
+        print("before:", strongLine)
         strongLine = [x for n,x in enumerate(strongLine) if x not in strongLine[:n]]
-        if len(strongLine) == maxLine:
-            break
+        print("after:",strongLine)
+        # if len(strongLine) == maxLine:
+        #     break
 
     if len(strongLine) == 0:
         strongLine = [[rho_theta_coor[0][i], rho_theta_coor[1][i]]]
-
+    print(strongLine)
     return strongLine
 
 def drawLine(imgForDraw, lines, threshold, diagonal, reduceScale, startPoint, endPoint):
     # draw lines
     rho_theta_coor = np.where(lines>threshold)
+    for i in rho_theta_coor[0]:
+        for j in rho_theta_coor[1]:
+            print("rho:",lines[rho_theta_coor[0][i], "theta:", rho_theta_coor[1][j]])
+
     if len(rho_theta_coor[0]) != 0:
         strongLine = findStrongLine(rho_theta_coor)
         for rho, theta in strongLine:
+            print("rho:",rho,"theta:",theta)
             x1 = startPoint[rho][theta][1] * ( 2 ** reduceScale ) 
             y1 = startPoint[rho][theta][0] * ( 2 ** reduceScale )
             x2 = endPoint[rho][theta][1] * ( 2 ** reduceScale )
@@ -87,7 +95,7 @@ def houghline(img, imgForDraw, threshold, reduceScale):
                     d = min(abs(possible_rho - dist))
                     # acceptable diff range <= 1 (because we cannot check all possible rho values)
                     if d <= 1:
-                        index = math.floor(dist + lines.shape[0]/2)
+                        index = math.floor(dist + diagonal)
                         lines[index,theta] = lines[index,theta] + 1 
                         # initial start point                    
                         if len(startPoint[index][theta]) == 0:
